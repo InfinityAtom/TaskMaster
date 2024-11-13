@@ -5,9 +5,46 @@
 @inject TaskMaster.Data.Model.TaskMasterContext DbContext
 @inject ISnackbar snackbar
 @layout TaskMaster.Components.Layout.LoginLayout
-<MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
-    <MudPaper Elevation="4" Class="pa-6">
-        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Create an Account</MudText>
+
+<style>
+    .registration-container {
+        max-width: 400px;
+        margin: auto;
+        background-color: #f9f9f9;
+        border-radius: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+    }
+
+    .registration-title {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 24px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .registration-button {
+        background-color: #007aff;
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .registration-button:hover {
+            background-color: #005bb5;
+        }
+
+    .registration-link {
+        font-size: 14px;
+        color: #007aff;
+        text-decoration: none;
+    }
+
+        .registration-link:hover {
+            text-decoration: underline;
+        }
+</style>
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4 registration-title">Create an Account</MudText>
 
         <MudForm @ref="form" Valid="HandleValidSubmit">
             <MudTextField Label="Username" @bind-Value="username" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
@@ -16,16 +53,15 @@
             <MudTextField Label="Last Name" @bind-Value="lastName" Required="true" Variant="Variant.Outlined" />
             <MudTextField Label="Password" @bind-Value="password" InputType="InputType.Password" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" />
 
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="RegisterUser" Class="mt-4">Register</MudButton>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="RegisterUser" Class="mt-4 registration-button">Register</MudButton>
         </MudForm>
 
-        <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-2">Already have an account? <MudLink Href="/login">Login here</MudLink></MudText>
-    </MudPaper>
-</MudContainer>
+        <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-2">Already have an account? <MudLink Href="/login" Class="registration-link">Login here</MudLink></MudText>
+    
 
 @code {
     private MudForm form;
-    
+
     private string username;
     private string email;
     private string firstName;
@@ -41,15 +77,15 @@
 
             // Create a new User object
             var user = new User
-            {
-                Username = username,
-                Email = email,
-                FirstName = firstName,
-                LastName = lastName,
-                PasswordHash = passwordHash,
-                Role = "User", // Default role
-                CreatedAt = DateTime.UtcNow
-            };
+                {
+                    Username = username,
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    PasswordHash = passwordHash,
+                    Role = "User", // Default role
+                    CreatedAt = DateTime.UtcNow
+                };
 
             // Save the user to the database
             DbContext.Users.Add(user);
