@@ -1,0 +1,47 @@
+﻿@page "/addtask"
+@inject NavigationManager NavigationManager
+@using TaskMaster.Models
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
+    <MudPaper Class="pa-4">
+        <MudText Typo="Typo.h5" Class="mb-4">Add New Task</MudText>
+
+        <MudTextField @bind-Value="Task.Title" Label="Title" Variant="Variant.Outlined" Required="true" FullWidth="true" />
+        <MudTextField @bind-Value="Task.Description" Label="Description" Variant="Variant.Outlined" Multiline="true" FullWidth="true" Class="mt-3" />
+
+        <MudDatePicker @bind-Value="Task.DueDate" Label="Due Date" Variant="Variant.Outlined" Class="mt-3" FullWidth="true" />
+
+        <MudCheckBox T="bool" @bind-Checked="Task.Completed" Label="Mark as Completed" Class="mt-3" />
+
+        <MudGrid GutterSize="GutterSize.Small" Class="mt-4">
+            <MudItem xs="12" sm="6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTask" FullWidth="true">Save</MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel" FullWidth="true">Cancel</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private TaskItem Task { get; set; } = new TaskItem();
+    private List<TaskItem> tasks = new();
+
+    private void SaveTask()
+    {
+        // Add the new task to the list of tasks
+        tasks.Add(new TaskItem
+            {
+                Title = Task.Title,
+                Description = Task.Description,
+                DueDate = Task.DueDate,
+                Completed = Task.Completed
+            });
+
+        // Navigate back to the main page after saving
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void Cancel() => NavigationManager.NavigateTo("/");
+}

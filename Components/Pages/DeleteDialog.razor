@@ -1,0 +1,35 @@
+﻿@using TaskMaster.Models
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6" Class="mb-2">Confirm Task Deletion</MudText>
+        <MudText>Are you sure you want to delete the following task?</MudText>
+
+        <MudPaper Class="pa-3 mt-3" Outlined="true">
+            <MudText><strong>Title:</strong> @TaskToDelete?.Title</MudText>
+            <MudText><strong>Description:</strong> @TaskToDelete?.Description</MudText>
+            <MudText><strong>Due Date:</strong> @(TaskToDelete?.DueDate?.ToShortDateString() ?? "No Due Date")</MudText>
+        </MudPaper>
+
+        <MudGrid GutterSize="GutterSize.Small" Class="mt-4">
+            <MudItem xs="12" sm="6">
+                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ConfirmDelete" FullWidth="true">Delete</MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel" FullWidth="true">Cancel</MudButton>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance MudDialog { get; set; }
+    [Parameter] public TaskItem TaskToDelete { get; set; }
+
+    private void ConfirmDelete()
+    {
+        MudDialog.Close(DialogResult.Ok(TaskToDelete));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+}

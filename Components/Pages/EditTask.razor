@@ -1,0 +1,72 @@
+﻿@page "/edit/{taskId:int}"
+@inject NavigationManager NavigationManager
+@using TaskMaster.Models
+@using System.Linq
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
+    <MudPaper Class="pa-4">
+        <MudText Typo="Typo.h5" Class="mb-4">Edit Task</MudText>
+
+        <MudTextField @bind-Value="Task.Title" Label="Title" Variant="Variant.Outlined" Required="true" />
+        <MudTextField @bind-Value="Task.Description" Label="Description" Variant="Variant.Outlined" Multiline="true" Class="mt-3" />
+
+        <MudDatePicker @bind-Value="Task.DueDate" Label="Due Date" Variant="Variant.Outlined" Class="mt-3" />
+
+        <MudCheckBox T="bool" @bind-Checked="Task.Completed" Label="Mark as Completed" Class="mt-3" />
+
+        <MudGrid GutterSize="GutterSize.Small" Class="mt-4">
+            <MudItem xs="12" sm="6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTask">Save</MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    [Parameter] public int TaskId { get; set; }
+    private TaskItem Task { get; set; } = new TaskItem();
+    [CascadingParameter] public List<TaskItem> tasks { get; set; } = new List<TaskItem>();
+
+    protected override void OnInitialized()
+    {
+        if (tasks != null && tasks.Any())
+        {
+            // Find the task to edit by TaskId
+            Task = tasks.FirstOrDefault(t => t.Id == TaskId);
+            if (Task == null)
+            {
+                Task = new TaskItem { Id = TaskId }; // Create a new task if it doesn't exist
+            }
+        }
+    }
+
+    private void SaveTask()
+    {
+        if (tasks == null)
+        {
+            tasks = new List<TaskItem>();
+        }
+
+        // Update the task in the list or add it if it doesn't exist
+        var taskToUpdate = tasks.FirstOrDefault(t => t.Id == TaskId);
+        if (taskToUpdate != null)
+        {
+            taskToUpdate.Title = Task.Title;
+            taskToUpdate.Description = Task.Description;
+            taskToUpdate.DueDate = Task.DueDate;
+            taskToUpdate.Completed = Task.Completed;
+        }
+        else
+        {
+            tasks.Add(Task);
+        }
+
+        // Navigate back to the main page after saving
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void Cancel() => NavigationManager.NavigateTo("/");
+}

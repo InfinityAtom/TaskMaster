@@ -1,0 +1,76 @@
+﻿@page "/register"
+@using TaskMaster.Data.Model
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject TaskMaster.Data.Model.TaskMasterContext DbContext
+@inject ISnackbar snackbar
+@layout TaskMaster.Components.Layout.LoginLayout
+<MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
+    <MudPaper Elevation="4" Class="pa-6">
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Create an Account</MudText>
+
+        <MudForm @ref="form" Valid="HandleValidSubmit">
+            <MudTextField Label="Username" @bind-Value="username" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
+            <MudTextField Label="Email" @bind-Value="email" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
+            <MudTextField Label="First Name" @bind-Value="firstName" Required="true" Variant="Variant.Outlined" />
+            <MudTextField Label="Last Name" @bind-Value="lastName" Required="true" Variant="Variant.Outlined" />
+            <MudTextField Label="Password" @bind-Value="password" InputType="InputType.Password" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" />
+
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="RegisterUser" Class="mt-4">Register</MudButton>
+        </MudForm>
+
+        <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-2">Already have an account? <MudLink Href="/login">Login here</MudLink></MudText>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudForm form;
+    
+    private string username;
+    private string email;
+    private string firstName;
+    private string lastName;
+    private string password;
+
+    private async Task RegisterUser()
+    {
+        try
+        {
+            // Hash the password before saving
+            var passwordHash = HashPassword(password);
+
+            // Create a new User object
+            var user = new User
+            {
+                Username = username,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                PasswordHash = passwordHash,
+                Role = "User", // Default role
+                CreatedAt = DateTime.UtcNow
+            };
+
+            // Save the user to the database
+            DbContext.Users.Add(user);
+            await DbContext.SaveChangesAsync();
+
+            // Store the user ID in local storage
+            await localStorage.SetItemAsync("userId", user.Id);
+
+            // Display a success message and redirect
+            snackbar.Add("Registration successful! Redirecting...", Severity.Success);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private byte[] HashPassword(string password)
+    {
+        using var sha256 = System.Security.Cryptography.SHA256.Create();
+        return sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+    }
+}

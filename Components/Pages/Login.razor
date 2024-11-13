@@ -1,0 +1,64 @@
+﻿@page "/login"
+@using Microsoft.EntityFrameworkCore
+@using TaskMaster.Data.Model
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject TaskMaster.Data.Model.TaskMasterContext DbContext
+@inject ISnackbar snackbar
+@layout TaskMaster.Components.Layout.LoginLayout
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
+    <MudPaper Elevation="4" Class="pa-6">
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Login</MudText>
+
+        <MudForm @ref="form" Valid="HandleValidSubmit">
+            <MudTextField Label="Username or Email" @bind-Value="usernameOrEmail" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
+            <MudTextField Label="Password" @bind-Value="password" InputType="InputType.Password" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" />
+
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="LoginUser" Class="mt-4">Login</MudButton>
+        </MudForm>
+
+        <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-2">Don't have an account? <MudLink Href="/register">Register here</MudLink></MudText>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudForm form;
+
+    private string usernameOrEmail;
+    private string password;
+
+    private async Task LoginUser()
+    {
+        try
+        {
+            // Find the user by username or email
+            var user = await DbContext.Users
+                .FirstOrDefaultAsync(u => u.Username == usernameOrEmail || u.Email == usernameOrEmail);
+
+            if (user == null || !VerifyPassword(password, user.PasswordHash))
+            {
+                snackbar.Add("Invalid username or password.", Severity.Error);
+                return;
+            }
+
+            // Store the user ID in local storage
+            await localStorage.SetItemAsync("userId", user.Id);
+
+            // Display a success message and redirect
+            snackbar.Add("Login successful! Redirecting...", Severity.Success);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private bool VerifyPassword(string inputPassword, byte[] storedHash)
+    {
+        using var sha256 = System.Security.Cryptography.SHA256.Create();
+        var inputHash = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(inputPassword));
+        return inputHash.SequenceEqual(storedHash);
+    }
+}
