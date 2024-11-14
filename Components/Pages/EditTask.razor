@@ -1,71 +1,107 @@
 ﻿@page "/edit/{taskId:int}"
 @inject NavigationManager NavigationManager
-@using TaskMaster.Models
+@using TaskMaster.Data.Model
+@inject TaskMaster.Data.Model.TaskMasterContext DbContext
+@inject ISnackbar snackbar
 @using System.Linq
 
-<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
-    <MudPaper Class="pa-4">
-        <MudText Typo="Typo.h5" Class="mb-4">Edit Task</MudText>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="page-container">
+    <MudPaper Class="form-container">
+        <MudText Typo="Typo.h5" Align="Align.Center" Class="header-title">Edit Task</MudText>
 
-        <MudTextField @bind-Value="Task.Title" Label="Title" Variant="Variant.Outlined" Required="true" />
-        <MudTextField @bind-Value="Task.Description" Label="Description" Variant="Variant.Outlined" Multiline="true" Class="mt-3" />
+        <!-- Task Fields -->
+        <MudTextField @bind-Value="Task.TaskTitle" Label="Title" Variant="Variant.Outlined" Required="true" Class="form-field" />
+        <MudTextField @bind-Value="Task.TaskDescription" Label="Description" Variant="Variant.Outlined" Multiline="true" Class="form-field" />
+        
+        <MudDatePicker Label="Start Date" @bind-Date="Task.StartDate" Variant="Variant.Outlined" Class="form-field" />
+        <MudDatePicker Label="End Date" @bind-Date="Task.EndDate" Variant="Variant.Outlined" Class="form-field" />
 
-        <MudDatePicker @bind-Value="Task.DueDate" Label="Due Date" Variant="Variant.Outlined" Class="mt-3" />
-
-        <MudCheckBox T="bool" @bind-Checked="Task.Completed" Label="Mark as Completed" Class="mt-3" />
-
-        <MudGrid GutterSize="GutterSize.Small" Class="mt-4">
-            <MudItem xs="12" sm="6">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTask">Save</MudButton>
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
-            </MudItem>
-        </MudGrid>
+        <!-- Action Buttons -->
+        <div class="button-container">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTask" Class="save-button">Save</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel" Class="cancel-button">Cancel</MudButton>
+        </div>
     </MudPaper>
 </MudContainer>
 
+<style>
+    .page-container {
+        padding: 24px;
+    }
+
+    .form-container {
+        padding: 36px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-title {
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #333;
+    }
+
+    .form-field {
+        width: 100%;
+        margin-top: 12px;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .save-button {
+        width: 100%;
+    }
+
+    .cancel-button {
+        width: 100%;
+    }
+</style>
+
 @code {
     [Parameter] public int TaskId { get; set; }
-    private TaskItem Task { get; set; } = new TaskItem();
-    [CascadingParameter] public List<TaskItem> tasks { get; set; } = new List<TaskItem>();
+    private Activity Task { get; set; } = new Activity();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        if (tasks != null && tasks.Any())
+        // Retrieve the task from the database by ID
+        Task = await DbContext.Activities.FindAsync(TaskId);
+
+        if (Task == null)
         {
-            // Find the task to edit by TaskId
-            Task = tasks.FirstOrDefault(t => t.Id == TaskId);
-            if (Task == null)
-            {
-                Task = new TaskItem { Id = TaskId }; // Create a new task if it doesn't exist
-            }
+            snackbar.Add("Task not found.", Severity.Error);
+            NavigationManager.NavigateTo("/");
         }
     }
 
-    private void SaveTask()
+    private async void SaveTask()
     {
-        if (tasks == null)
+        try
         {
-            tasks = new List<TaskItem>();
+            if (DbContext.Activities.Any(t => t.TaskId == TaskId))
+            {
+                // Update existing task
+                DbContext.Activities.Update(Task);
+            }
+            else
+            {
+                // Add new task if it doesn’t exist
+                DbContext.Activities.Add(Task);
+            }
+            
+            await DbContext.SaveChangesAsync();
+            snackbar.Add("Task saved successfully!", Severity.Success);
+            NavigationManager.NavigateTo("/");
         }
-
-        // Update the task in the list or add it if it doesn't exist
-        var taskToUpdate = tasks.FirstOrDefault(t => t.Id == TaskId);
-        if (taskToUpdate != null)
+        catch (Exception ex)
         {
-            taskToUpdate.Title = Task.Title;
-            taskToUpdate.Description = Task.Description;
-            taskToUpdate.DueDate = Task.DueDate;
-            taskToUpdate.Completed = Task.Completed;
+            snackbar.Add($"Error saving task: {ex.Message}", Severity.Error);
         }
-        else
-        {
-            tasks.Add(Task);
-        }
-
-        // Navigate back to the main page after saving
-        NavigationManager.NavigateTo("/");
     }
 
     private void Cancel() => NavigationManager.NavigateTo("/");

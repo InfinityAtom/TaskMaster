@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject TaskMaster.Data.Model.TaskMasterContext DbContext
 
 <MudThemeProvider />
 <MudPopoverProvider />
@@ -6,23 +8,53 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
+    <MudAppBar Elevation="4" Color="Color.Primary">
+        <!-- Task Master Logo and Application Title -->
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        My Application
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
-    </MudDrawer>
-<MudMainContent>
-    <MudContainer MaxWidth="MaxWidth.Medium">
-        @Body
-    </MudContainer>
-</MudMainContent>
-</MudLayout>
-@code {
-    bool _drawerOpen = true;
+        <MudText Typo="Typo.h6" Color="Color.Inherit" Class="ml-2">Task Master</MudText>
 
-    void DrawerToggle()
+        <!-- Welcome Message -->
+        <MudSpacer />
+        <MudText Typo="Typo.body1" Color="Color.Inherit" Class="mr-4"> @(user?.Username ?? "User")</MudText>
+
+        <!-- Profile and Settings Icons -->
+        <MudIconButton Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" />
+        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" />
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="@_drawerOpen" Color="Color.Default" Elevation="1">
+        <MudDrawerHeader>
+            <img src="logo.png" alt="Task Master Logo" style="width: 100%; padding: 8px;" />
+        </MudDrawerHeader>
+
+        <!-- Navigation Menu -->
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="p-4">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+    private TaskMaster.Data.Model.User? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Retrieve the UserID from local storage
+        int? userId = await localStorage.GetItemAsync<int?>("userId");
+
+        // Fetch user data if the ID exists
+        if (userId.HasValue)
+        {
+            user = await DbContext.Users.FindAsync(userId.Value);
+        }
+    }
+
+    private void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }

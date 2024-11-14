@@ -1,92 +1,121 @@
 ﻿@page "/"
+@using MudBlazor
 @inject NavigationManager NavigationManager
-@using TaskMaster.Models
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+<MudContainer MaxWidth="MaxWidth.Large" Class="dashboard-container">
+    <!-- Centered Logo Section -->
+    <div class="logo-container">
+        <img src="logo.png" alt="TaskMaster Logo" class="login-logo" />
+    </div>
+    
+    <MudText Typo="Typo.subtitle1" Align="Align.Center" Class="dashboard-subtitle">
+        Navigate through your tasks, view reports, manage settings, and more.
+    </MudText>
 
-    <MudPaper Class="pa-4 mb-4">
-        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-2">Task Management</MudText>
-        <MudText Typo="Typo.body1" Align="Align.Center" Class="mb-4">Manage your tasks efficiently and keep track of completed and upcoming activities.</MudText>
-    </MudPaper>
+    <!-- Main Dashboard Cards -->
+    <MudGrid GutterSize="GutterSize.Medium" Class="dashboard-grid">
 
-    <MudGrid GutterSize="GutterSize.Small">
-        @if (!tasks.Any())
-        {
-            <MudItem xs="12">
-                <MudText Typo="Typo.h6" Align="Align.Center">No tasks found.</MudText>
-            </MudItem>
-        }
-        else
-        {
-            @foreach (var task in tasks)
-            {
-                <MudItem xs="12">
-                    <MudPaper Class="py-8 px-10" Outlined="false" Elevation="@(!task.Completed ? 4 : 0)">
-                        <MudGrid>
-                            <MudItem xs="9">
-                                <MudText Typo="Typo.h6">@task.Title</MudText>
-                                <MudText>@task.Description</MudText>
-                                <MudText><strong>Due:</strong> @(task.DueDate?.ToShortDateString() ?? "No Due Date")</MudText>
-                            </MudItem>
-                            <MudItem xs="3" Class="d-flex flex-column align-end">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" OnClick="() => EditTask(task.Id)" />
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => DeleteTask(task)" />
-                                <MudIconButton Icon="@Icons.Material.Filled.Check" Color="Color.Success" OnClick="() => MarkAsCompleted(task)" Disabled="@task.Completed" />
-                                @if (task.Completed)
-                                {
-                                    <MudChip T="string" Color="Color.Success" Class="mt-2">Completed</MudChip>
-                                }
-                            </MudItem>
-                        </MudGrid>
-                    </MudPaper>
-                </MudItem>
-            }
-        }
+        <!-- My Tasks Card -->
+        <MudItem xs="12" sm="12" md="6" lg="4">
+            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/tasks')">
+                <MudIcon Icon="@Icons.Material.Filled.ListAlt" Size="Size.Large" Class="dashboard-icon" />
+                <MudText Typo="Typo.h6" Class="mt-2">My Tasks</MudText>
+                <MudText Typo="Typo.body2" Class="dashboard-description">Manage your tasks, mark them complete, or view pending tasks.</MudText>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Calendar Card -->
+        <MudItem xs="12" sm="12" md="6" lg="4">
+            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/calendar')">
+                <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Size="Size.Large" Class="dashboard-icon" />
+                <MudText Typo="Typo.h6" Class="mt-2">Calendar</MudText>
+                <MudText Typo="Typo.body2" Class="dashboard-description">View all tasks and deadlines on your calendar.</MudText>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Reports Card -->
+        <MudItem xs="12" sm="12" md="6" lg="4">
+            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/reports')">
+                <MudIcon Icon="@Icons.Material.Filled.Assessment" Size="Size.Large" Class="dashboard-icon" />
+                <MudText Typo="Typo.h6" Class="mt-2">Reports</MudText>
+                <MudText Typo="Typo.body2" Class="dashboard-description">Analyze your task completion and productivity reports.</MudText>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Settings Card -->
+        <MudItem xs="12" sm="12" md="6" lg="4">
+            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/settings')">
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Size="Size.Large" Class="dashboard-icon" />
+                <MudText Typo="Typo.h6" Class="mt-2">Settings</MudText>
+                <MudText Typo="Typo.body2" Class="dashboard-description">Adjust your profile, preferences, and security settings.</MudText>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Help Card -->
+        <MudItem xs="12" sm="12" md="6" lg="4">
+            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/help')">
+                <MudIcon Icon="@Icons.Material.Filled.HelpOutline" Size="Size.Large" Class="dashboard-icon" />
+                <MudText Typo="Typo.h6" Class="mt-2">Help</MudText>
+                <MudText Typo="Typo.body2" Class="dashboard-description">Find answers to common questions and get support.</MudText>
+            </MudPaper>
+        </MudItem>
     </MudGrid>
-
-    <MudPaper Class="pa-4 mt-4">
-        <MudText Typo="Typo.body2" Align="Align.Center">TaskMaster - Your simple and efficient task management solution.</MudText>
-    </MudPaper>
 </MudContainer>
 
+<style>
+    .dashboard-container {
+        padding: 24px;
+    }
+
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .login-logo {
+        width: 300px;
+    }
+
+    .dashboard-subtitle {
+        font-size: 1rem;
+        color: #888888;
+        margin-bottom: 24px;
+    }
+
+    .dashboard-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .dashboard-card {
+        padding: 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: box-shadow 0.3s ease;
+        border-radius: 12px;
+        background-color: #f9f9f9;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-card:hover {
+        box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .dashboard-icon {
+        color: #1976d2;
+        margin-bottom: 8px;
+    }
+
+    .dashboard-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 8px;
+    }
+</style>
+
 @code {
-    private List<TaskItem> tasks = new();
-
-    protected override void OnInitialized()
-    {
-        // Sample tasks
-        tasks = new List<TaskItem>
-        {
-            new TaskItem { Id = 1, Title = "Buy Groceries", Description = "Milk, Eggs, Bread", DueDate = DateTime.Now.AddDays(1), Completed = false },
-            new TaskItem { Id = 2, Title = "Project Meeting", Description = "Discuss project requirements", DueDate = DateTime.Now.AddDays(3), Completed = false },
-            new TaskItem { Id = 3, Title = "Workout", Description = "Go for a run", DueDate = null, Completed = true },
-        };
-    }
-
-    private void EditTask(int taskId)
-    {
-        NavigationManager.NavigateTo($"/edit/{taskId}");
-    }
-
-    private async void DeleteTask(TaskItem task)
-    {
-        var parameters = new DialogParameters { ["TaskToDelete"] = task };
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
-        var dialog = DialogService.Show<DeleteDialog>("Delete Task", parameters, options);
-        var result = await dialog.Result;
-
-        if (!result.Canceled && result.Data is TaskItem taskToDelete)
-        {
-            tasks.Remove(taskToDelete);
-            StateHasChanged();
-        }
-    }
-
-    private void MarkAsCompleted(TaskItem task)
-    {
-        task.Completed = true;
-        StateHasChanged();
-    }
-
-    [Inject] IDialogService DialogService { get; set; }
+    private void NavigateTo(string url) => NavigationManager.NavigateTo(url);
 }

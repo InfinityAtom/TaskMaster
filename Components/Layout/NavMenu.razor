@@ -1,9 +1,55 @@
 ﻿<MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
-    <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Servers</MudNavLink>
-    <MudNavGroup Title="Settings" Expanded="true">
-        <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
-        <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">Security</MudNavLink>
+    <!-- Main Links -->
+    <MudNavLink Href="/" Match="NavLinkMatch.All">
+        <MudIcon Icon="@Icons.Material.Filled.Dashboard" /> Dashboard
+    </MudNavLink>
+    <MudNavLink Href="/tasks" Match="NavLinkMatch.Prefix">
+        <MudIcon Icon="@Icons.Material.Filled.ListAlt" /> My Tasks
+    </MudNavLink>
+    <MudNavLink Href="/calendar" Match="NavLinkMatch.Prefix">
+        <MudIcon Icon="@Icons.Material.Filled.CalendarToday" /> Calendar
+    </MudNavLink>
+    <MudNavLink Href="/reports" Match="NavLinkMatch.Prefix">
+        <MudIcon Icon="@Icons.Material.Filled.Assessment" /> Reports
+    </MudNavLink>
+
+    <!-- Task Management Group -->
+    <MudNavGroup Title="Task Management" Expanded="true">
+        <MudNavLink Href="/add-task" Match="NavLinkMatch.Prefix">
+            <MudIcon Icon="@Icons.Material.Filled.AddCircleOutline" /> Add New Task
+        </MudNavLink>
+        <MudNavLink Href="/tasks/completed" Match="NavLinkMatch.Prefix">
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircleOutline" /> Completed Tasks
+        </MudNavLink>
+        <MudNavLink Href="/tasks/pending" Match="NavLinkMatch.Prefix">
+            <MudIcon Icon="@Icons.Material.Filled.PendingActions" /> Pending Tasks
+        </MudNavLink>
     </MudNavGroup>
-    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>
+
+    <!-- Settings Group -->
+    <MudNavGroup Title="Settings" Expanded="false">
+        <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix">
+            <MudIcon Icon="@Icons.Material.Filled.Person" /> Profile
+        </MudNavLink>
+        <MudNavLink Href="/notifications" Match="NavLinkMatch.Prefix">
+            <MudIcon Icon="@Icons.Material.Filled.Notifications" /> Notifications
+        </MudNavLink>
+        <MudNavLink Href="/preferences" Match="NavLinkMatch.Prefix">
+            <MudIcon Icon="@Icons.Material.Filled.Tune" /> Preferences
+        </MudNavLink>
+        <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">
+            <MudIcon Icon="@Icons.Material.Filled.Group" /> User Management
+        </MudNavLink>
+        <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">
+            <MudIcon Icon="@Icons.Material.Filled.Security" /> Security
+        </MudNavLink>
+    </MudNavGroup>
+
+    <!-- Help and Information -->
+    <MudNavLink Href="/help" Match="NavLinkMatch.Prefix">
+        <MudIcon Icon="@Icons.Material.Filled.HelpOutline" /> Help
+    </MudNavLink>
+    <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">
+        <MudIcon Icon="@Icons.Material.Filled.Info" /> About
+    </MudNavLink>
 </MudNavMenu>

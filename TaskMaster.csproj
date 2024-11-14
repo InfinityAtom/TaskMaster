@@ -37,12 +37,24 @@
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
     </PropertyGroup>
 
+    <PropertyGroup>
+      <BaseOutputPath>bin\</BaseOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.26100.0|AnyCPU'">
+      <NoWarn>1701;1702</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.26100.0|AnyCPU'">
+      <NoWarn>1701;1702</NoWarn>
+    </PropertyGroup>
+
     <ItemGroup>
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" />
 
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#260086" BaseSize="128,128" />
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#ced6e0" BaseSize="128,128" />
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
@@ -72,6 +84,14 @@
 
     <ItemGroup>
       <Folder Include="Platforms\Android\Resources\mipmap\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiImage Include="wwwroot\logo.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\logo.png" />
     </ItemGroup>
 
     <ItemGroup>
