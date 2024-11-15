@@ -10,7 +10,7 @@
     <!-- Header Section -->
     <MudText Typo="Typo.h4" Align="Align.Center" Class="header-title">My Tasks</MudText>
     <MudText Typo="Typo.subtitle1" Align="Align.Center" Class="header-subtitle">
-        View, manage, and update your tasks.
+        Manage your tasks effectively.
     </MudText>
 
     <!-- Task List Section -->
@@ -24,71 +24,52 @@
         else if (!tasks.Any())
         {
             <MudItem xs="12">
-                <MudText Typo="Typo.h6" Align="Align.Center">No tasks found. Start by adding a new task!</MudText>
+                <MudText Typo="Typo.h6" Align="Align.Center">No tasks yet. Start by adding one!</MudText>
             </MudItem>
         }
         else
         {
             @foreach (var task in tasks)
             {
-                @if (!(task.Completed))
-                {
-                   <MudItem xs="12">
-                    <MudPaper Class="task-card" Elevation="3">
-                        <MudGrid> 
-                            <!-- Task Information -->
-                            <MudItem xs="9">
-
-                                <MudText Typo="Typo.h6" Class="task-title">@task.TaskTitle</MudText>
-                                <MudText Typo="Typo.body2" Class="task-description">@task.TaskDescription</MudText>
-                                <MudText Color="Color.Secondary" Class="task-date"><strong>Start Date:</strong> @(task.StartDate?.ToShortDateString() ?? "No Start Date")</MudText>
-                                <MudText Color="Color.Secondary" Class="task-date"><strong>End Date:</strong> @(task.EndDate?.ToShortDateString() ?? "No End Date")</MudText>
-
-                            </MudItem>
-                            <!-- Task Actions -->
-
-                            <MudItem xs="3" Class="task-actions">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" OnClick="() => EditTask(task.TaskId)" />
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => DeleteTask(task)" />
-                                <MudIconButton Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" OnClick="() => MarkAsCompleted(task)" Disabled="@task.Completed" />
-                            </MudItem>
-                        </MudGrid>
-                    </MudPaper>
-                </MudItem> 
-                }
-                else
-                {
-                   <MudItem xs="12">
-                    <MudPaper Class="task-card" Elevation="0">
-                        <MudGrid>
-                            <!-- Task Information -->
-                            <MudItem xs="9">
-
-                                <MudText Typo="Typo.h6" Class="task-title">@task.TaskTitle</MudText>
-                                <MudText Typo="Typo.body2" Class="task-description">@task.TaskDescription</MudText>
-                                <MudText Color="Color.Secondary" Class="task-date"><strong>Start Date:</strong> @(task.StartDate?.ToShortDateString() ?? "No Start Date")</MudText>
-                                <MudText Color="Color.Secondary" Class="task-date"><strong>End Date:</strong> @(task.EndDate?.ToShortDateString() ?? "No End Date")</MudText>
-
-                            </MudItem>
-                            <!-- Task Actions -->
-
-                            <MudItem xs="3" Class="task-actions">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" OnClick="() => EditTask(task.TaskId)" />
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => DeleteTask(task)" />
-                                <MudIconButton Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" OnClick="() => MarkAsCompleted(task)" Disabled="@task.Completed" />
-                            </MudItem>
-                        </MudGrid>
-                    </MudPaper>
-                </MudItem> 
-                }
-
-                
+                <MudItem xs="12">
+                    <MudCard Class="task-card" Elevation="3">
+                        <MudCardHeader>
+                            <!-- Avatar with conditional icon and color for task completion -->
+                            <MudAvatar Color="@(task.Completed ? Color.Success : Color.Primary)" Variant="Variant.Filled" Size="Size.Medium" Class="task-icon" OnClick="() => ToggleCompletion(task)">
+                                <MudIcon Icon="@(task.Completed ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Task)" />
+                            </MudAvatar>
+                            <MudText Typo="Typo.h6" Class="task-title">@task.TaskTitle</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText Typo="Typo.body2" Class="task-description">@task.TaskDescription</MudText>
+                            <MudDivider Class="date-divider" />
+                            <div class="task-dates">
+                                <MudIcon Icon="@Icons.Material.Filled.Event" Class="icon-dates" />
+                                <span class="date-text"><strong>Start:</strong> @(task.StartDate?.ToShortDateString() ?? "Not Set")</span>
+                                <span class="date-text"><strong>End:</strong> @(task.EndDate?.ToShortDateString() ?? "Not Set")</span>
+                            </div>
+                        </MudCardContent>
+                        <MudDivider />
+                        <MudCardActions Class="task-actions">
+                            <MudButton Variant="Variant.Text" Color="Color.Info" OnClick="() => EditTask(task.TaskId)">
+                                <MudIcon Icon="@Icons.Material.Filled.Edit" /> Edit
+                            </MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="() => DeleteTask(task)">
+                                <MudIcon Icon="@Icons.Material.Filled.Delete" /> Delete
+                            </MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => ToggleCompletion(task)">
+                                <MudIcon Icon="@(task.Completed ? Icons.Material.Filled.Undo : Icons.Material.Filled.CheckCircle)" />
+                                @(task.Completed ? "Undo" : "Done")
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
             }
         }
     </MudGrid>
 
     <!-- Floating Action Button -->
-    <MudFab Color="Color.Primary" Icon="@Icons.Material.Filled.Add" OnClick="NavigateToAddTask" Class="fab" />
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="NavigateToAddTask" Class="fab" />
 </MudContainer>
 
 <style>
@@ -100,7 +81,7 @@
     .header-title {
         font-weight: bold;
         color: #4a4a4a;
-        margin-bottom: 8px;
+        margin-bottom: 16px;
     }
 
     .header-subtitle {
@@ -110,51 +91,63 @@
     }
 
     .task-card {
-        padding: 24px;
-        text-align: center;
-        cursor: pointer;
-        transition: box-shadow 0.3s ease;
         border-radius: 12px;
-        background-color: #f9f9f9;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 16px;
+        padding: 16px;
+        transition: box-shadow 0.2s ease-in-out;
     }
 
         .task-card:hover {
-            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         }
 
     .task-title {
-        font-weight: 500;
-        margin-bottom: 4px;
+        font-weight: 600;
         color: #2c3e50;
+        margin-left: 8px;
+    }
+
+    .task-icon {
+        margin-right: 8px;
+        cursor: pointer;
     }
 
     .task-description {
         font-size: 0.9rem;
-        margin-bottom: 8px;
         color: #7f8c8d;
+        margin-bottom: 8px;
     }
 
-    .task-date {
+    .date-divider {
+        margin: 8px 0;
+    }
+
+    .task-dates {
+        display: flex;
+        justify-content: space-between;
         font-size: 0.85rem;
-        margin-bottom: 12px;
         color: #95a5a6;
+        padding: 8px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        margin-top: 8px;
+    }
+
+    .icon-dates {
+        color: #e67e22;
+        margin-right: 8px;
+    }
+
+    .date-text {
+        margin-left: 4px;
     }
 
     .task-actions {
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 8px;
+        justify-content: space-around;
+        padding-top: 8px;
     }
 
-    .completed-chip {
-        margin-top: 8px;
-        font-size: 0.75rem;
-        font-weight: bold;
-    }
-
-    /* Floating Action Button (FAB) Styling */
     .fab {
         position: fixed;
         bottom: 24px;
@@ -204,11 +197,12 @@
         }
     }
 
-    private void MarkAsCompleted(Activity task)
+    private async void ToggleCompletion(Activity task)
     {
-        task.Completed = true;
+        task.Completed = !task.Completed;
         DbContext.Update(task);
-        DbContext.SaveChanges();
+        await DbContext.SaveChangesAsync();
+        snackbar.Add(task.Completed ? "Task marked as completed!" : "Task marked as incomplete!", Severity.Success);
         StateHasChanged();
     }
 
