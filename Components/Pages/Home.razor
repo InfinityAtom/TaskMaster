@@ -7,57 +7,67 @@
     <div class="logo-container">
         <img src="logo.png" alt="TaskMaster Logo" class="login-logo" />
     </div>
-    
+
     <MudText Typo="Typo.subtitle1" Align="Align.Center" Class="dashboard-subtitle">
         Navigate through your tasks, view reports, manage settings, and more.
     </MudText>
 
-    <!-- Main Dashboard Cards -->
+    <!-- Main Dashboard Navigation Buttons -->
     <MudGrid GutterSize="GutterSize.Medium" Class="dashboard-grid">
 
-        <!-- My Tasks Card -->
+        <!-- My Tasks Button -->
         <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/tasks')">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" Href="/tasks">
                 <MudIcon Icon="@Icons.Material.Filled.ListAlt" Size="Size.Large" Class="dashboard-icon" />
-                <MudText Typo="Typo.h6" Class="mt-2">My Tasks</MudText>
-                <MudText Typo="Typo.body2" Class="dashboard-description">Manage your tasks, mark them complete, or view pending tasks.</MudText>
-            </MudPaper>
+                <div>
+                    <MudText Typo="Typo.h6">My Tasks</MudText>
+                    <MudText Typo="Typo.body2" Class="dashboard-description">Manage your tasks, mark them complete, or view pending tasks.</MudText>
+                </div>
+            </MudButton>
         </MudItem>
 
-        <!-- Calendar Card -->
+        <!-- Calendar Button -->
         <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/calendar')">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" Href="/calendar">
                 <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Size="Size.Large" Class="dashboard-icon" />
-                <MudText Typo="Typo.h6" Class="mt-2">Calendar</MudText>
-                <MudText Typo="Typo.body2" Class="dashboard-description">View all tasks and deadlines on your calendar.</MudText>
-            </MudPaper>
+                <div>
+                    <MudText Typo="Typo.h6">Calendar</MudText>
+                    <MudText Typo="Typo.body2" Class="dashboard-description">View all tasks and deadlines on your calendar.</MudText>
+                </div>
+            </MudButton>
         </MudItem>
 
-        <!-- Reports Card -->
+        <!-- Share Task -->
         <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/reports')">
-                <MudIcon Icon="@Icons.Material.Filled.Assessment" Size="Size.Large" Class="dashboard-icon" />
-                <MudText Typo="Typo.h6" Class="mt-2">Reports</MudText>
-                <MudText Typo="Typo.body2" Class="dashboard-description">Analyze your task completion and productivity reports.</MudText>
-            </MudPaper>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" Href="/share-task">
+                <MudIcon Icon="@Icons.Material.Filled.Email" Size="Size.Large" Class="dashboard-icon" />
+                <div>
+                    <MudText Typo="Typo.h6">Share a task through email</MudText>
+                    <MudText Typo="Typo.body2" Class="dashboard-description">Share a task to someone.</MudText>
+                </div>
+            </MudButton>
         </MudItem>
 
-        <!-- Settings Card -->
+        <!-- Settings Button -->
         <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/settings')">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" Href="/settings">
                 <MudIcon Icon="@Icons.Material.Filled.Settings" Size="Size.Large" Class="dashboard-icon" />
-                <MudText Typo="Typo.h6" Class="mt-2">Settings</MudText>
-                <MudText Typo="Typo.body2" Class="dashboard-description">Adjust your profile, preferences, and security settings.</MudText>
-            </MudPaper>
+                <div>
+                    <MudText Typo="Typo.h6">Settings</MudText>
+                    <MudText Typo="Typo.body2" Class="dashboard-description">Adjust your profile, preferences, and security settings.</MudText>
+                </div>
+            </MudButton>
         </MudItem>
 
-        <!-- Help Card -->
+        <!-- Help Button -->
         <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudPaper Class="dashboard-card" Elevation="3" OnClick="() => NavigateTo('/help')">
+            <MudButton Href="/help" Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" >
                 <MudIcon Icon="@Icons.Material.Filled.HelpOutline" Size="Size.Large" Class="dashboard-icon" />
-                <MudText Typo="Typo.h6" Class="mt-2">Help</MudText>
-                <MudText Typo="Typo.body2" Class="dashboard-description">Find answers to common questions and get support.</MudText>
-            </MudPaper>
+                <div>
+                    <MudText Typo="Typo.h6">Help</MudText>
+                    <MudText Typo="Typo.body2" Class="dashboard-description">Find answers to common questions and get support.</MudText>
+                </div>
+            </MudButton>
         </MudItem>
     </MudGrid>
 </MudContainer>
@@ -89,33 +99,35 @@
         gap: 16px;
     }
 
-    .dashboard-card {
-        padding: 24px;
+    .dashboard-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         text-align: center;
-        cursor: pointer;
-        transition: box-shadow 0.3s ease;
+        width: 100%;
+        padding: 24px;
         border-radius: 12px;
-        background-color: #f9f9f9;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .dashboard-card:hover {
-        box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
-        transform: translateY(-2px);
-    }
+        .dashboard-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+        }
 
     .dashboard-icon {
-        color: #1976d2;
-        margin-bottom: 8px;
+        color: white;
+        margin-bottom: 12px;
     }
 
     .dashboard-description {
-        color: #666;
+        color: white;
         font-size: 0.9rem;
-        margin-top: 8px;
     }
 </style>
 
 @code {
     private void NavigateTo(string url) => NavigationManager.NavigateTo(url);
 }
+

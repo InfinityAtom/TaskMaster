@@ -18,9 +18,15 @@
     <MudForm @ref="taskForm" Class="form-container" Valid="HandleValidSubmit">
         <MudTextField Label="Task Title" @bind-Value="taskTitle" Required="true" Variant="Variant.Outlined" Class="form-field" />
         <MudTextField Label="Task Description" @bind-Value="taskDescription" Variant="Variant.Outlined" Multiline="true" Class="form-field" />
-        
+
+        <!-- Start Date and Time -->
         <MudDatePicker Label="Start Date" @bind-Date="startDate" Variant="Variant.Outlined" Class="form-field" />
+        <MudTimePicker Label="Start Time" @bind-Time="startTime" Variant="Variant.Outlined" Class="form-field" />
+
+        <!-- End Date and Time -->
         <MudDatePicker Label="End Date" @bind-Date="endDate" Variant="Variant.Outlined" Class="form-field" />
+        <MudTimePicker Label="End Time" @bind-Time="endTime" Variant="Variant.Outlined" Class="form-field" />
+
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitTask" Class="submit-button">Add Task</MudButton>
     </MudForm>
 </MudContainer>
@@ -79,7 +85,9 @@
     private string taskTitle;
     private string taskDescription;
     private DateTime? startDate;
+    private TimeSpan? startTime;
     private DateTime? endDate;
+    private TimeSpan? endTime;
     private bool taskCompleted = false;
 
     private async Task SubmitTask()
@@ -96,28 +104,42 @@
                 return;
             }
 
+            // Combine date and time for start and end
+            var startDateTime = CombineDateAndTime(startDate, startTime);
+            var endDateTime = CombineDateAndTime(endDate, endTime);
+
             // Create a new task
             var newTask = new Activity
-            {
-                UserId = userId.Value,
-                TaskTitle = taskTitle,
-                TaskDescription = taskDescription,
-                StartDate = startDate,
-                EndDate = endDate,
-                Completed = taskCompleted
-            };
+                {
+                    UserId = userId.Value,
+                    TaskTitle = taskTitle,
+                    TaskDescription = taskDescription,
+                    StartDate = startDateTime,
+                    EndDate = endDateTime,
+                    Completed = taskCompleted
+                };
 
             // Save the task to the database
             DbContext.Activities.Add(newTask);
             await DbContext.SaveChangesAsync();
 
             snackbar.Add("Task added successfully!", Severity.Success);
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/tasks");
         }
         catch (Exception ex)
         {
             snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
+    }
+
+    private DateTime? CombineDateAndTime(DateTime? date, TimeSpan? time)
+    {
+        if (date == null)
+        {
+            return null;
+        }
+
+        return time.HasValue ? date.Value.Date.Add(time.Value) : date.Value.Date;
     }
 
     private void HandleValidSubmit()

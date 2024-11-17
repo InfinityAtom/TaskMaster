@@ -103,7 +103,17 @@
         <MudTextField Label="Username or Email" @bind-Value="usernameOrEmail" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" Class="login-field" />
         <MudTextField Label="Password" @bind-Value="password" InputType="InputType.Password" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" Class="login-field" />
 
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="LoginUser" Class="login-button">Login</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="LoginUser" Class="login-button" Disabled="isLoading">
+            @if (isLoading)
+            {
+                <MudProgressCircular Indeterminate="true" Size="Size.Small" />
+            }
+            else
+            {
+                @:Login
+            }
+        </MudButton>
+
     </MudForm>
 
     <MudText Typo="Typo.body2" Align="Align.Center" Class="login-subtitle">Don't have an account? <MudLink Href="/register" Class="login-link">Register here</MudLink></MudText>
@@ -114,9 +124,25 @@
 
     private string usernameOrEmail;
     private string password;
+    private bool isLoading = false; // Loading state
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user ID is already in local storage
+        int? userId = await localStorage.GetItemAsync<int?>("userId");
+
+        // Redirect to the homepage if the user is logged in
+        if (userId.HasValue)
+        {
+            NavigationManager.NavigateTo("/", forceLoad: true);
+        }
+    }
 
     private async Task LoginUser()
     {
+        if (isLoading) return;
+
+        isLoading = true; // Start loading
         try
         {
             // Find the user by username or email
@@ -139,6 +165,10 @@
         catch (Exception ex)
         {
             snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false; // Stop loading
         }
     }
 

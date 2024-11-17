@@ -45,8 +45,12 @@
                             <MudDivider Class="date-divider" />
                             <div class="task-dates">
                                 <MudIcon Icon="@Icons.Material.Filled.Event" Class="icon-dates" />
-                                <span class="date-text"><strong>Start:</strong> @(task.StartDate?.ToShortDateString() ?? "Not Set")</span>
-                                <span class="date-text"><strong>End:</strong> @(task.EndDate?.ToShortDateString() ?? "Not Set")</span>
+                                <span class="date-text">
+                                    <strong>Start:</strong> @(task.StartDate == null || task.StartDate == DateTime.MinValue ? "Not Set" : task.StartDate.Value.ToString("g")) <!-- Display Date and Hour -->
+                                </span>
+                                <span class="date-text">
+                                    <strong>End:</strong> @(task.EndDate == null || task.EndDate == DateTime.MinValue || task.EndDate == new DateTime(1900, 1, 1) ? "Not Set" : task.EndDate.Value.ToString("g")) <!-- Display Date and Hour -->
+                                </span>
                             </div>
                         </MudCardContent>
                         <MudDivider />
