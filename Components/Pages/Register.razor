@@ -3,7 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject TaskMaster.Data.Model.TaskMasterContext DbContext
-@inject ISnackbar snackbar
+@inject ISnackbar Snackbar
 @layout TaskMaster.Components.Layout.LoginLayout
 
 <style>
@@ -95,10 +95,8 @@
         <MudTextField Label="Last Name" @bind-Value="lastName" Required="true" Variant="Variant.Outlined" Class="registration-field" />
         <MudTextField Label="Password" @bind-Value="password" InputType="InputType.Password" Required="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" Class="registration-field" />
 
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="RegisterUser" Class="registration-button">Register</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="SaveToLocalStorageAndRedirect" Class="registration-button">Register</MudButton>
     </MudForm>
-
-    <MudText Typo="Typo.body2" Align="Align.Center" Class="registration-subtitle">Already have an account? <MudLink Href="/login" Class="registration-link">Login here</MudLink></MudText>
 </div>
 
 @code {
@@ -110,45 +108,23 @@
     private string lastName;
     private string password;
 
-    private async Task RegisterUser()
+    private async Task SaveToLocalStorageAndRedirect()
     {
         try
         {
-            // Hash the password before saving
-            var passwordHash = HashPassword(password);
+            // Save all user data to local storage
+            await localStorage.SetItemAsync("tempUsername", username);
+            await localStorage.SetItemAsync("tempEmail", email);
+            await localStorage.SetItemAsync("tempFirstName", firstName);
+            await localStorage.SetItemAsync("tempLastName", lastName);
+            await localStorage.SetItemAsync("tempPassword", password);
 
-            // Create a new User object
-            var user = new User
-            {
-                    Username = username,
-                    Email = email,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    PasswordHash = passwordHash,
-                    Role = "User", // Default role
-                    CreatedAt = DateTime.UtcNow
-            };
-
-            // Save the user to the database
-            DbContext.Users.Add(user);
-            await DbContext.SaveChangesAsync();
-
-            // Store the user ID in local storage
-            await localStorage.SetItemAsync("userId", user.Id);
-
-            // Display a success message and redirect
-            snackbar.Add("Registration successful! Redirecting...", Severity.Success);
-            NavigationManager.NavigateTo("/");
+            Snackbar.Add("Registration details saved. Please verify your email.", Severity.Info);
+            NavigationManager.NavigateTo("/check-email");
         }
         catch (Exception ex)
         {
-            snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
-    }
-
-    private byte[] HashPassword(string password)
-    {
-        using var sha256 = System.Security.Cryptography.SHA256.Create();
-        return sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
     }
 }

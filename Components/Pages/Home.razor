@@ -3,131 +3,199 @@
 @inject NavigationManager NavigationManager
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="dashboard-container">
-    <!-- Centered Logo Section -->
-    <div class="logo-container">
-        <img src="logo.png" alt="TaskMaster Logo" class="login-logo" />
+    <!-- Welcome Section -->
+    <div class="header-section">
+        <img src="logo.png" alt="TaskMaster Logo" class="dashboard-logo" />
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="dashboard-title">Welcome to TaskMaster</MudText>
+        <MudText Typo="Typo.body1" Align="Align.Center" Class="dashboard-subtitle">
+            Boost your productivity with style and simplicity.
+        </MudText>
     </div>
 
-    <MudText Typo="Typo.subtitle1" Align="Align.Center" Class="dashboard-subtitle">
-        Navigate through your tasks, view reports, manage settings, and more.
-    </MudText>
-
-    <!-- Main Dashboard Navigation Buttons -->
-    <MudGrid GutterSize="GutterSize.Medium" Class="dashboard-grid">
-
-        <!-- My Tasks Button -->
-        <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" Href="/tasks">
-                <MudIcon Icon="@Icons.Material.Filled.ListAlt" Size="Size.Large" Class="dashboard-icon" />
-                <div>
-                    <MudText Typo="Typo.h6">My Tasks</MudText>
-                    <MudText Typo="Typo.body2" Class="dashboard-description">Manage your tasks, mark them complete, or view pending tasks.</MudText>
+    <!-- Navigation Grid -->
+    <MudGrid GutterSize="GutterSize.Large" Class="dashboard-grid">
+        @foreach (var item in NavigationItems)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <div class="dashboard-card" @onclick="() => NavigateTo(item.Link)">
+                    <div class="card-content">
+                        <div class="card-icon-wrapper">
+                            <MudIcon Icon="@item.Icon" Size="Size.Medium" />
+                        </div>
+                        <MudText Typo="Typo.h5" Align="Align.Center" Class="card-title">@item.Title</MudText>
+                        <MudText Typo="Typo.body2" Align="Align.Center" Class="card-description">@item.Description</MudText>
+                    </div>
                 </div>
-            </MudButton>
-        </MudItem>
-
-        <!-- Calendar Button -->
-        <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" Href="/calendar">
-                <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Size="Size.Large" Class="dashboard-icon" />
-                <div>
-                    <MudText Typo="Typo.h6">Calendar</MudText>
-                    <MudText Typo="Typo.body2" Class="dashboard-description">View all tasks and deadlines on your calendar.</MudText>
-                </div>
-            </MudButton>
-        </MudItem>
-
-        <!-- Share Task -->
-        <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" Href="/share-task">
-                <MudIcon Icon="@Icons.Material.Filled.Email" Size="Size.Large" Class="dashboard-icon" />
-                <div>
-                    <MudText Typo="Typo.h6">Share a task through email</MudText>
-                    <MudText Typo="Typo.body2" Class="dashboard-description">Share a task to someone.</MudText>
-                </div>
-            </MudButton>
-        </MudItem>
-
-        <!-- Settings Button -->
-        <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" Href="/settings">
-                <MudIcon Icon="@Icons.Material.Filled.Settings" Size="Size.Large" Class="dashboard-icon" />
-                <div>
-                    <MudText Typo="Typo.h6">Settings</MudText>
-                    <MudText Typo="Typo.body2" Class="dashboard-description">Adjust your profile, preferences, and security settings.</MudText>
-                </div>
-            </MudButton>
-        </MudItem>
-
-        <!-- Help Button -->
-        <MudItem xs="12" sm="12" md="6" lg="4">
-            <MudButton Href="/help" Variant="Variant.Filled" Color="Color.Primary" Class="dashboard-button" >
-                <MudIcon Icon="@Icons.Material.Filled.HelpOutline" Size="Size.Large" Class="dashboard-icon" />
-                <div>
-                    <MudText Typo="Typo.h6">Help</MudText>
-                    <MudText Typo="Typo.body2" Class="dashboard-description">Find answers to common questions and get support.</MudText>
-                </div>
-            </MudButton>
-        </MudItem>
+            </MudItem>
+        }
     </MudGrid>
 </MudContainer>
 
 <style>
+    /* General Container */
     .dashboard-container {
-        padding: 24px;
+        padding: 20px 24px;
+        background: linear-gradient(135deg, #f5f7fa, #ffffff);
+        min-height: 100vh;
     }
 
-    .logo-container {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-
-    .login-logo {
-        width: 300px;
-    }
-
-    .dashboard-subtitle {
-        font-size: 1rem;
-        color: #888888;
-        margin-bottom: 24px;
-    }
-
-    .dashboard-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-    }
-
-    .dashboard-button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    /* Header Section */
+    .header-section {
         text-align: center;
-        width: 100%;
-        padding: 24px;
-        border-radius: 12px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 32px;
     }
 
-        .dashboard-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
-        }
+    .dashboard-logo {
+        width: 160px; /* Enlarged logo for better prominence */
+        margin-bottom: 16px;
+    }
 
-    .dashboard-icon {
-        color: white;
+    .dashboard-title {
+        font-weight: 800;
+        color: #3c4858;
         margin-bottom: 12px;
     }
 
-    .dashboard-description {
+    .dashboard-subtitle {
+        color: #6c757d;
+        max-width: 480px;
+        margin: 0 auto;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+
+    /* Navigation Grid */
+    .dashboard-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 24px;
+    }
+
+    /* Dashboard Card */
+    .dashboard-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 24px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid #f0f0f5; /* Subtle border for cleaner visuals */
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(89, 74, 226, 0.6); /* Theme hover accent */
+        }
+
+    .card-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-icon-wrapper {
+        background: linear-gradient(145deg, #594AE2, #7d6ff0);
         color: white;
+        padding: 16px;
+        border-radius: 50%;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0px 6px 12px rgba(89, 74, 226, 0.3);
+    }
+
+    .card-title {
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #1f2937;
+    }
+
+    .card-description {
+        color: #6b7280;
+        text-align: center;
+        line-height: 1.5;
         font-size: 0.9rem;
+    }
+
+    /* Media Queries for Responsiveness */
+    @@media (max-width: 768px) {
+        .dashboard-grid {
+            flex-direction: column;
+        }
+
+        .dashboard-card {
+            padding: 20px;
+        }
+
+        .dashboard-logo {
+            width: 140px;
+        }
+
+        .card-icon-wrapper {
+            padding: 12px;
+        }
     }
 </style>
 
 @code {
-    private void NavigateTo(string url) => NavigationManager.NavigateTo(url);
-}
+    private List<NavigationItem> NavigationItems = new()
+    {
+        new NavigationItem
+        {
+            Title = "My Tasks",
+            Description = "View and manage your tasks efficiently.",
+            Icon = Icons.Material.Filled.ListAlt,
+            Link = "/tasks"
+        },
+        new NavigationItem
+        {
+            Title = "Calendar",
+            Description = "Visualize all tasks in your schedule.",
+            Icon = Icons.Material.Filled.CalendarToday,
+            Link = "/calendar"
+        },
+        new NavigationItem
+        {
+            Title = "Share Tasks",
+            Description = "Collaborate and share tasks easily.",
+            Icon = Icons.Material.Filled.Email,
+            Link = "/share-task"
+        },
+        new NavigationItem
+        {
+            Title = "Settings",
+            Description = "Customize your preferences and profile.",
+            Icon = Icons.Material.Filled.Settings,
+            Link = "/settings"
+        },
+        new NavigationItem
+        {
+            Title = "Help",
+            Description = "Find answers and support for your queries.",
+            Icon = Icons.Material.Filled.HelpOutline,
+            Link = "/help"
+        }
+    };
 
+    private void NavigateTo(string url)
+    {
+        NavigationManager.NavigateTo(url);
+    }
+
+    private class NavigationItem
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; }
+        public string Link { get; set; }
+    }
+}
